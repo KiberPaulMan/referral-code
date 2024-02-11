@@ -12,7 +12,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         exclude = ['user', 'referrer']
-        depth = 1
 
     def get_referrals(self, obj):
         queryset = Profile.objects.filter(referrer=obj.user)
