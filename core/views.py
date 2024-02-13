@@ -1,74 +1,20 @@
-from django.shortcuts import render, redirect
 from rest_framework import permissions, generics, status
 from django.http import HttpResponse, JsonResponse
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.conf import settings
-from .forms import SignUpForm, EmailForm
 from .models import Profile
-from .serializers import ProfileSerializer, ProfileCodeSerializer
-
-
-def register_user(request, uuid=None):
-    """
-    Регистрация пользователя с реферальным кодом и без него
-    :param request:
-    :param uuid:
-    :return:
-    """
-    if request.method == 'POST':
-        user_form = SignUpForm(request.POST)
-
-        if user_form.is_valid():
-            user = user_form.save()
-
-            if uuid:
-                try:
-                    referrer = Profile.objects.get(ref_code=settings.URL_REF_CODE + uuid)
-                    Profile.objects.create(user=user, referrer=referrer.user)
-                except Profile.DoesNotExist:
-                    user.delete()
-                    return HttpResponse('Incorrect referral code link')
-
-            elif 'email' in request.session:
-                referrer = Profile.objects.get(user__email=request.session.get('email'))
-                Profile.objects.create(user=user, referrer=referrer.user)
-
-            else:
-                Profile.objects.create(user=user)
-
-            return redirect('user-detail', pk=Profile.objects.last().id)
-    else:
-        user_form = SignUpForm()
-    return render(request, 'core/register.html', {'form': user_form})
-
-
-def register_by_email(request):
-    """
-    Регистрация пользователя через email реферера
-    :param request:
-    :return:
-    """
-    if request.method == 'POST':
-        form = EmailForm(request.POST)
-
-        if form.is_valid():
-            referrer_email = form.cleaned_data.get('email')
-            try:
-                Profile.objects.get(user__email=referrer_email)
-                request.session['email'] = referrer_email
-                return redirect('register')
-            except Profile.DoesNotExist:
-                return HttpResponse('Incorrect referrer email')
-
-    else:
-        form = EmailForm()
-    return render(request, 'core/register.html', {'form': form})
+from .serializers import (
+    ProfileSerializer,
+    ProfileCodeSerializer,
+    ProfileCreateSerializer
+)
 
 
 class ProfileAPIView(generics.RetrieveAPIView):
     """
-    APi для просмотра информации о пользователе и его рефералах
+    API для просмотра информации о пользователе и его рефералах
     """
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -96,3 +42,21 @@ class ProfileCodeAPIView(APIView):
         profile.end_date_code = None
         profile.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProfileCreateAPIView(CreateAPIView):
+    """
+    API для регистрации пользователя тремя способами:
+        1. Обычная регистрация
+        2. Регистрация по реферальному коду
+        3. Регистрация по email реферера
+    """
+    queryset = Profile.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = ProfileCreateSerializer
+
+    def get_serializer_context(self):
+        context = {'request': self.request}
+        if 'uuid' in self.kwargs:
+            context['uuid'] = self.kwargs['uuid']
+        return context
