@@ -18,13 +18,13 @@
 
 # Рабочий процесс
 #### Регистрация пользователя:
-	<http://127.0.0.1:8000/register/>
+	<http://127.0.0.1:8000/core/api/v1/profile/register/>
 	
 #### Регистрация пользователя по реферальному коду (пример):
-	<http://127.0.0.1:8000/reg/A9u2j3Esq4/>
+	<http://127.0.0.1:8000/core/api/v1/profile/register/GZMB7KLYE2/>
 	
 #### Регистрация пользователя по email реферера:
-	<http://127.0.0.1:8000/email-register/>
+	<http://127.0.0.1:8000/core/api/v1/profile/register/>
 	
 #### Документация по API:
 	<http://127.0.0.1:8000/swagger/>
