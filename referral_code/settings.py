@@ -108,11 +108,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # rest_framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {
@@ -189,4 +186,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Для формирования полноценной ссылки реферального кода
-URL_REF_CODE = 'http://127.0.0.1:8000/reg/'
+URL_REF_CODE = 'http://127.0.0.1:8000/core/api/v1/profile/register/'
