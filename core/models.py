@@ -10,7 +10,6 @@ MAX_LENGTH_CODE = 10
 
 
 class Profile(models.Model):
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ref_code = models.URLField(null=True, blank=True)
     end_date_code = models.DateField(blank=True, null=True)
