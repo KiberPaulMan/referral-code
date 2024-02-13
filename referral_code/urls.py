@@ -41,7 +41,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
 
-    path('', include('core.urls')),
+    path('core/', include('core.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
