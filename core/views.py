@@ -33,7 +33,7 @@ class ProfileCodeAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED, data=serializer.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data='Invalid date format')
 
     def delete(self, request, pk):
         profile = self.get_object(pk)
