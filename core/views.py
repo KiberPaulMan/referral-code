@@ -1,5 +1,4 @@
 from rest_framework import permissions, generics, status
-from django.http import HttpResponse, JsonResponse
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -33,8 +32,8 @@ class ProfileCodeAPIView(APIView):
         serializer = ProfileCodeSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(status=status.HTTP_201_CREATED, data=serializer.data)
-        return JsonResponse(status=status.HTTP_400_BAD_REQUEST, data="wrong parameters")
+            return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         profile = self.get_object(pk)
