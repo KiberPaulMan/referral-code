@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Profile
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user_email = data['user']['email']
         if user_email and Profile.objects.filter(user__email=user_email).exists():
-            raise APIException("A user with this email already exists!")
+            raise ValidationError("A user with this email already exists!")
         return data
 
     username = serializers.CharField(source='user.username')
@@ -62,7 +62,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
         try:
             user = self.create_user(validated_data)
         except:
-            raise APIException('This user already exists!')
+            raise ValidationError('This user already exists!')
 
         if 'uuid' in self.context:
             try:
@@ -78,7 +78,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
                 profile = Profile.objects.create(user=user, referrer=referrer.user)
             except Profile.DoesNotExist:
                 user.delete()
-                raise APIException('Incorrect referrer email!')
+                raise ValidationError('Incorrect referrer email!')
 
         else:
             profile = Profile.objects.create(user=user)
