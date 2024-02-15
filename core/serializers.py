@@ -70,7 +70,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
                 profile = Profile.objects.create(user=user, referrer=referrer.user)
             except Profile.DoesNotExist:
                 user.delete()
-                raise APIException('Incorrect referral code link!')
+                raise ValidationError('Incorrect referral code link!')
 
         elif referrer_email:
             try:
